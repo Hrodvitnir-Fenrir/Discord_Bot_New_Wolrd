@@ -5,10 +5,12 @@ const client = new Discord.Client({ intents });
 const { MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, Message } = require('discord.js');
 const format = require('date-format');
 const puppeteer = require("puppeteer");
+const fs = require("fs");
 
 const getIcon = require("./src/getIcon");
 const ddos = require("./src/ddos");
 const embedMaker = require("./src/embedMaker");
+const rpg = require("./src/rpg");
 
 Date.prototype.addMin = function (m) {
     this.setTime(this.getTime() + (m * 60 * 1000));
@@ -16,9 +18,11 @@ Date.prototype.addMin = function (m) {
 }
 
 client.on("ready", () => {
-    client.users.cache.get("236552969544269826").send("Init moi !!");
+    // client.users.cache.get("236552969544269826").send("Init moi !!");
     console.log("Je suis log tocard");
-    client.user.setPresence({ status: 'dnd', activities: [{ type: "COMPETING", name: "Wolfisheim" }] });
+    client.user.setPresence({ status: 'dnd', activities: [{ type: "COMPETING", name: "TBD" }] });
+
+
 })
 
 let players = [];
@@ -30,129 +34,27 @@ client.on("messageCreate", async (message) => {
             client.channels.cache.get(message.channel.id).messages.fetch(message.id).then(message => message.delete());
             const theEmbed = await embedMaker(players);
 
-            const role = new MessageActionRow()
-                .addComponents(
-                    new MessageSelectMenu()
-                        .setCustomId('role')
-                        .setPlaceholder('Sélectionne ton rôle')
-                        .addOptions([
-                            {
-                                label: 'DPS',
-                                description: 'Sélectionne ceci si tu est un DPS',
-                                value: 'dps',
-                                emoji: "<:dps:897068249324347502>"
-                            },
-                            {
-                                label: 'TANK',
-                                description: 'Sélectionne ceci si tu est un TANK',
-                                value: 'tank',
-                                emoji: "<:tank:897068249265610772>"
-                            },
-                            {
-                                label: 'HEAL',
-                                description: 'Sélectionne ceci si tu est un HEAL',
-                                value: 'heal',
-                                emoji: "<:heal:897068249181737011>"
-                            },
-                        ])
-                );
-
-            const weapon = new MessageActionRow()
-                .addComponents(
-                    new MessageSelectMenu()
-                        .setCustomId('weapon')
-                        .setPlaceholder('Sélectionne tes deux arme')
-                        .setMinValues(2)
-                        .setMaxValues(2)
-                        .addOptions([
-                            {
-                                label: 'Arc',
-                                description: 'Sélectionne ceci si tu joue un arc',
-                                value: 'arc',
-                                emoji: getIcon('arc')
-                            },
-                            {
-                                label: 'Bâton de feu',
-                                description: 'Sélectionne ceci si tu joue un bâton de feu',
-                                value: 'baton_feu',
-                                emoji: getIcon('baton_feu')
-                            },
-                            {
-                                label: 'Bâton de vie',
-                                description: 'Sélectionne ceci si tu joue un bâton de vie ',
-                                value: 'baton_vie',
-                                emoji: getIcon('baton_vie')
-                            },
-                            {
-                                label: 'Epée bouclier',
-                                description: 'Sélectionne ceci si tu joue une epée et un bouclier ',
-                                value: 'epee',
-                                emoji: getIcon('epee')
-                            },
-                            {
-                                label: 'Hache double',
-                                description: 'Sélectionne ceci si tu joue une hache double ',
-                                value: 'double_hache',
-                                emoji: getIcon('double_hache')
-                            },
-                            {
-                                label: 'Gantelet de glace',
-                                description: 'Sélectionne ceci si tu joue un gantelet de glace ',
-                                value: 'gant_glace',
-                                emoji: getIcon('gant_glace')
-                            },
-                            {
-                                label: 'Hachette',
-                                description: 'Sélectionne ceci si tu joue une hachette ',
-                                value: 'hachette',
-                                emoji: getIcon('hachette')
-                            },
-                            {
-                                label: 'Lance',
-                                description: 'Sélectionne ceci si tu joue une lance ',
-                                value: 'lance',
-                                emoji: getIcon('lance')
-                            },
-                            {
-                                label: "Marteau d'armes",
-                                description: "Sélectionne ceci si tu joue un marteau d'armes",
-                                value: 'marteau',
-                                emoji: getIcon('marteau')
-                            },
-                            {
-                                label: 'Mousquet',
-                                description: 'Sélectionne ceci si tu joue un mousquet',
-                                value: 'mousquet',
-                                emoji: getIcon('mousquet')
-                            },
-                            {
-                                label: 'Rapière',
-                                description: 'Sélectionne ceci si tu joue un rapière',
-                                value: 'rapiere',
-                                emoji: getIcon('rapiere')
-                            },
-                        ]),
-                );
-
-            const del = new MessageActionRow()
+            const select = new MessageActionRow()
                 .addComponents(
                     new MessageButton()
-                        .setCustomId('delete')
+                        .setCustomId('register')
+                        .setLabel('➕')
+                        .setStyle('SUCCESS'),
+                    new MessageButton()
+                        .setCustomId('deletsafe')
                         .setLabel('❌')
                         .setStyle('DANGER'),
                 );
-            mess = await message.channel.send({ embeds: [theEmbed], components: [role, weapon, del] });
+            mess = await message.channel.send({ embeds: [theEmbed], components: [select] });
         }
 
         if (message.content == "%init") {
             client.channels.cache.get(message.channel.id).messages.fetch(message.id).then(message => message.delete());
             msg = await message.channel.send('Les stats arrivent... <a:load:895199688645546016>');
 
-            let i = 0;
-            let time = 10;
+            await fs.writeFileSync('./local.json', JSON.stringify(msg));
 
-            await ddos(i);
-
+            await ddos(client);
             // await setInterval(async () => {
             //     i++;
             //     await ddos(i);
@@ -170,7 +72,6 @@ client.on("messageCreate", async (message) => {
 client.on('interactionCreate', async interaction => {
     // if (!interaction.isSelectMenu() && !interaction.isButton()) return;
 
-    let i = 0;
     let { id } = interaction.member;
 
     if (interaction.customId === 'role') {
@@ -196,6 +97,10 @@ client.on('interactionCreate', async interaction => {
         await interaction.update({ embeds: [theEmbed] });
     };
 
+
+
+
+
     if (interaction.customId === 'weapon') {
         let found = players.filter((player) => {
             return player.id == id;
@@ -220,6 +125,13 @@ client.on('interactionCreate', async interaction => {
         await interaction.update({ embeds: [theEmbed] });
     }
 
+
+
+
+
+
+
+
     if (interaction.customId === 'delete') {
         players = players.filter((player) => {
             return player.id != id;
@@ -229,9 +141,25 @@ client.on('interactionCreate', async interaction => {
         await interaction.update({ embeds: [theEmbed] });
     }
 
+
+
+
+
+
+
+
+
+    if (interaction.customId === 'register') {
+        await interaction.reply(await rpg())
+
+    }
+
     if (interaction.customId === 'update') {
-        await ddos(i);
-        i++
+        await ddos(client);
+        interaction.reply({ content: 'Mise a jour éfectuée', fetchReply: true, ephemeral: false})
+            .then(msg => {
+                setTimeout(() => msg.delete(), 2000)
+            })
     }
 });
 

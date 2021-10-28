@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "dev": "nodemon"
+    "dev": "nodemon --ignore local.json"
   },
   "author": "Fenrir",
   "license": "ISC",

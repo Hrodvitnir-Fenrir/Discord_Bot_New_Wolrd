@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, Message } = require('discord.js');
+const getIcon = require ("./getIcon")
 module.exports = async function embedMaker(players = []) {
     let tempDps = [];
     let tempTank = [];
@@ -33,14 +34,14 @@ module.exports = async function embedMaker(players = []) {
         .setColor("#cc6600")
         .setTitle("Prend tes rôles :")
         .setURL("https://nwdb.info/build")
-        .setDescription("Merci de présciser ton **main** rôle \n Tu peut sélectionner : __**DPS**__ | __**TANK**__ | __**HEAL**__ \n Ainsi que tes deux armes. \n\n ❌ Pour te retirer de la liste")
-        .setThumbnail("https://i.imgur.com/9TR51OU.png")
+        .setDescription("Voila la liste des membre de la guilde d'Artémis \n ➕ pour t'ajouter dans la liste \n ❌ pour te retirer de la liste")
+        .setThumbnail('https://i.imgur.com/KT6LE1j.png')
         .addFields(
-            { name: "__**DPS :**__", value: dpsText, inline: true },
-            { name: "__**TANK :**__", value: tankText, inline: true },
-            { name: "__**HEAL :**__", value: healText, inline: true },
+            { name: "__**DPS :**__", value: dpsText, inline: false },
+            { name: "__**TANK :**__", value: tankText, inline: false },
+            { name: "__**HEAL :**__", value: healText, inline: false },
         )
-        .setFooter("v1.0.0 | Made by Hrodvitnir_Fenrir#4416.", "https://i.imgur.com/pVTwS7j.png");
+        .setFooter("v2.0.0 | Made by Hrodvitnir_Fenrir#4416.", "https://i.imgur.com/Pw9TAba.png");
 
     return embedMaker;
 }

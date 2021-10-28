@@ -11,6 +11,7 @@ module.exports = function getIcon(name) {
         'marteau': '<:marteau:897069675643564042>',
         'mousquet': '<:mousquet:897069675366735892>',
         'rapiere': '<:rapiere:897069675366744064>',
+        'x2': '<:x2:903286347165483088>',
     };
 
     let selected = icons[name];
