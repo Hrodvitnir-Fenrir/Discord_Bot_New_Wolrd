@@ -44,7 +44,7 @@ module.exports = async function ddos(client) {
     }
 
 
-    const del = new MessageActionRow()
+    const update = new MessageActionRow()
         .addComponents(
             new MessageButton()
                 .setCustomId('update')
@@ -62,8 +62,8 @@ module.exports = async function ddos(client) {
     msg.edit({
         "content": null,
         "embeds": [{
-            "title": "**Etat du serveur Jumala <:fac:895264315630829568>**",
-            "description": "Mise a jour toutes les 10min de l'état du serveur ! \n\n Liens utile :\n [Actualités New World](https://www.newworld.com/fr-fr/news)\n [Outil global FR](https://new-world.guide/fr-FR) \n [Map interractive](https://www.newworld-map.com/) \n [Liste des objets du jeu](https://nwdb.info/) \n [Guide pêche](https://newworldfishingguide.com/) \n\n [Guide de  Shoji](https://docs.google.com/document/d/1ssfsMgCRftAmCzxXbTPAGjl25nFcNiPA8UiT2RCApg0/edit#)\n [Guide des Children of Bodom](https://docs.google.com/document/d/1MCkcj7rNPzcMED3PyXeiEjcGwPMc_h5ncUJmPPRJ7OA/edit#) ",
+            "title": "**Etat du serveur Jumala <:fac:903326160367267840>**",
+            "description": "Population sur le serveur jumala !\n\n Liens utile :\n [Actualités New World](https://www.newworld.com/fr-fr/news)\n [Outil global FR](https://new-world.guide/fr-FR) \n [Map interractive](https://www.newworld-map.com/) \n [Liste des objets du jeu](https://nwdb.info/) \n [Guide pêche](https://newworldfishingguide.com/) \n\n [Guide de  Shoji](https://docs.google.com/document/d/1ssfsMgCRftAmCzxXbTPAGjl25nFcNiPA8UiT2RCApg0/edit#)\n [Guide des Children of Bodom](https://docs.google.com/document/d/1MCkcj7rNPzcMED3PyXeiEjcGwPMc_h5ncUJmPPRJ7OA/edit#) ",
             "color": color,
             // "timestamp": new Date(),
             "footer": {
@@ -103,7 +103,7 @@ module.exports = async function ddos(client) {
         }],
 
         "components": [
-            del
+            update
         ]
     });
 }

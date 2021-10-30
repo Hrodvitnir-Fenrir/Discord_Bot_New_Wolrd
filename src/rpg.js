@@ -2,20 +2,40 @@ const { MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, Messag
 const { registerCustomQueryHandler } = require('puppeteer');
 const getIcon = require("./getIcon");
 
-module.exports = async function rpg(bio = []) {
+module.exports = async function rpg(bio) {
+    bio = [...bio];
 
-    bio = []
+    // console.log("Voila la bio qui devrais aller dans le profil : " + bio);
+    let final = ""
 
+    if (bio.length == 0) {
+        final = ".";
+    } else {
+        if (bio.length >= 3 && typeof bio[2] != "string") {
+            bio[2] = bio[2].join(" - ");
+        }
+
+        if (bio.length >= 4 && typeof bio[3] != "string") {
+            bio[3] = bio[3].join(" - ");
+        }
+
+        if (bio.length >= 5 && typeof bio[4] != "String") {
+            bio[4] = bio[4].join(" - ");
+        }
+
+        final = bio.join(" | ");
+        // final.replace(",", " ")
+    }
 
 
     const identity = new MessageEmbed()
         .setColor('#ea9f0d')
         .setTitle("Créé la fiche d'identité de ton personnage")
         .setURL("https://new-world.guide/fr-FR/calculators/skill-builder")
-        .setDescription('Sélectionne ton rôle, tes armes ainsi que tes métiers level 150+ et 200 \n ✅ pour valider \n ❌ pour annuler')
+        .setDescription("Sélectionne ton rôle, tes armes ainsi que tes métiers ! \n\n Merci de sélectionner tes rôle dans le bon ordre \n N'oublie pas de te retirer de la liste si tu y est déjà ! \n\n ✅ pour valider \n ❌ pour annuler")
         .setThumbnail('https://i.imgur.com/KT6LE1j.png')
         .addFields(
-            { name: "Tes informations :", value: "." }
+            { name: "Tes informations :", value: final }
         )
         .setFooter("v2.0.0 | Made by Hrodvitnir_Fenrir#4416.", "https://i.imgur.com/Pw9TAba.png");
 
@@ -135,35 +155,43 @@ module.exports = async function rpg(bio = []) {
         .addComponents(
             new MessageSelectMenu()
                 .setCustomId('job150')
+                .setMaxValues(7)
                 .setPlaceholder('Sélectionne tes métier level 150-199')
                 .addOptions([
                     {
                         label: "Fabrication d'armes",
                         value: 'armes',
+                        emoji: '<:armes:903377289104986162>'
                     },
                     {
                         label: "Fabrication d'armures",
                         value: 'armures',
+                        emoji: '<:armures:903377289365061672>'
                     },
                     {
                         label: "Ingénierie",
                         value: 'inge',
+                        emoji: '<:inge:903377289419554857>'
                     },
                     {
                         label: "Joaillerie",
                         value: 'joaillerie',
+                        emoji: '<:joaillerie:903377289537011782>'
                     },
                     {
                         label: "Arts obscurs",
                         value: 'arts',
+                        emoji: '<:arts:903377289524432926>'
                     },
                     {
                         label: "Cuisine",
                         value: 'cuisine',
+                        emoji: '<:cuisine:903377289444753428>'
                     },
                     {
                         label: "Ameublement",
                         value: 'ameublement',
+                        emoji: '<:ameublement:903377288748482581>'
                     },
                 ])
         );
@@ -172,40 +200,48 @@ module.exports = async function rpg(bio = []) {
         .addComponents(
             new MessageSelectMenu()
                 .setCustomId('job200')
+                .setMaxValues(7)
                 .setPlaceholder('Sélectionne tes métier level 200')
                 .addOptions([
                     {
                         label: "Fabrication d'armes",
                         value: 'armes',
+                        emoji: '<:armes:903377289104986162>'
                     },
                     {
                         label: "Fabrication d'armures",
                         value: 'armures',
+                        emoji: '<:armures:903377289365061672>'
                     },
                     {
                         label: "Ingénierie",
                         value: 'inge',
+                        emoji: '<:inge:903377289419554857>'
                     },
                     {
                         label: "Joaillerie",
                         value: 'joaillerie',
+                        emoji: '<:joaillerie:903377289537011782>'
                     },
                     {
                         label: "Arts obscurs",
                         value: 'arts',
+                        emoji: '<:arts:903377289524432926>'
                     },
                     {
                         label: "Cuisine",
                         value: 'cuisine',
+                        emoji: '<:cuisine:903377289444753428>'
                     },
                     {
                         label: "Ameublement",
                         value: 'ameublement',
+                        emoji: '<:ameublement:903377288748482581>'
                     },
                 ])
         );
 
-        const add = new MessageActionRow()
+    const add = new MessageActionRow()
         .addComponents(
             new MessageButton()
                 .setCustomId('save')
@@ -217,7 +253,6 @@ module.exports = async function rpg(bio = []) {
                 .setStyle('DANGER'),
         );
 
-
-        return {embeds: [identity], components: [role, weapon, job150, job200, add], fetchReply: true, ephemeral: true}
+    return { embeds: [identity], components: [role, weapon, job150, job200, add], fetchReply: true, ephemeral: true }
 
 }

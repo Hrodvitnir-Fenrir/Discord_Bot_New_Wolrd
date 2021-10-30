@@ -12,6 +12,14 @@ module.exports = function getIcon(name) {
         'mousquet': '<:mousquet:897069675366735892>',
         'rapiere': '<:rapiere:897069675366744064>',
         'x2': '<:x2:903286347165483088>',
+
+        'ameublement': '<:ameublement:903377288748482581>',
+        'armes': '<:armes:903377289104986162>',
+        'armures': '<:armures:903377289365061672>',
+        'arts': '<:arts:903377289524432926>',
+        'inge': '<:inge:903377289419554857>',
+        'joaillerie': '<:joaillerie:903377289537011782>',
+        'cuisine': '<:cuisine:903377289444753428>',
     };
 
     let selected = icons[name];
