@@ -5,35 +5,63 @@ const fs = require("fs");
 module.exports = async function embedMaker(client) {
 
 
-    let players = JSON.parse(fs.readFileSync("./player.json", 'utf8'));
+    let players = JSON.parse(fs.readFileSync("./json/player.json", 'utf8'));
+
+    let display = JSON.parse(fs.readFileSync("./json/display.json", 'utf8'));
+
 
 
     let dpsText = "";
+    let tankText = "";
+    let healText = "";
+
+    let show = 'name';
+
+    if (display % 2 == 0) {
+        show = 'id';
+    }
+
+
     players.forEach(player => {
         if (player.role == "dps") {
-            dpsText += player.id + " | " + player.weapons + "\n Métier 150 :" + player.jobs.j150 + " | Métier 200 :" + player.jobs.j200 + "\n";
+            dpsText += "__" + player[show] + "__" + " : " + player.weapons.join(" ") + "\n";
+        } if (player.jobs.j150.length != 0 && player.jobs.j200.length == 0) {
+            dpsText += "Métier 150 : " + player.jobs.j150.join(" ") + "\n";
+        } if (player.jobs.j150.length == 0 && player.jobs.j200.length != 0) {
+            dpsText += "Métier 200 : " + player.jobs.j200.join(" ") + "\n";
+        } if (player.jobs.j150.length != 0 && player.jobs.j200.length != 0) {
+            dpsText += "Métier 150 : " + player.jobs.j150.join(" ") + " | Métier 200 : " + player.jobs.j200.join(" ") + "\n";
         }
-
+        dpsText += "\n"
     });
 
-    let tankText = "";
     players.forEach(player => {
         if (player.role == "tank") {
-            tankText += player.id + " | " + player.weapons + "\n Métier 150 :" + player.jobs.j150 + " | Métier 200 :" + player.jobs.j200 + "\n";
-        }
-
+            tankText += "__" + player[show] + "__" + " : " + player.weapons.join(" ") + "\n";
+            if (player.jobs.j150.length != 0 && player.jobs.j200.length == 0) {
+                tankText += "Métier 150 : " + player.jobs.j150.join(" ") + "\n";
+            } if (player.jobs.j150.length == 0 && player.jobs.j200.length != 0) {
+                tankText += "Métier 200 : " + player.jobs.j200.join(" ") + "\n";
+            } if (player.jobs.j150.length != 0 && player.jobs.j200.length != 0) {
+                tankText += "Métier 150 : " + player.jobs.j150.join(" ") + " | Métier 200 : " + player.jobs.j200.join(" ") + "\n";
+            }
+        } 
+        dpsText += "\n"
     });
 
-
-    let healText = "";
     players.forEach(player => {
         if (player.role == "heal") {
-            healText += player.id + " | " + player.weapons + "\n Métier 150 :" + player.jobs.j150 + " | Métier 200 :" + player.jobs.j200 + "\n";
-        }
-
+            healText += "__" + player[show] + "__" + " : " + player.weapons.join(" ") + "\n";
+            if (player.jobs.j150.length != 0 && player.jobs.j200.length == 0) {
+                healText += "Métier 150 : " + player.jobs.j150.join(" ") + "\n";
+            } if (player.jobs.j150.length == 0 && player.jobs.j200.length != 0) {
+                healText += "Métier 200 : " + player.jobs.j200.join(" ") + "\n";
+            } if (player.jobs.j150.length != 0 && player.jobs.j200.length != 0) {
+                healText += "Métier 150 : " + player.jobs.j150.join(" ") + " | Métier 200 : " + player.jobs.j200.join(" ") + "\n";
+            }
+        } 
+        dpsText += "\n"
     });
-
-
 
     if (healText == "") healText = ".";
     if (dpsText == "") dpsText = ".";
@@ -51,26 +79,32 @@ module.exports = async function embedMaker(client) {
                 .setLabel('❌')
                 .setStyle('DANGER'),
             new MessageButton()
+                .setCustomId('change')
+                .setLabel('🔄')
+                .setStyle('SECONDARY'),
+            new MessageButton()
                 .setCustomId('deleteadmin')
                 .setLabel("Admin delete")
                 .setEmoji("<a:load:895199688645546016>")
-                .setStyle('DANGER')
+                .setStyle('DANGER'),
+
+
         );
 
-    let { id, channelId } = JSON.parse(fs.readFileSync("./localddos.json", 'utf8'));
-    msgDdos = await client.channels.cache.get(channelId).messages.fetch(id);
-    msgDdos.edit({
+    let { id, channelId } = JSON.parse(fs.readFileSync("./json/localrank.json", 'utf8'));
+    msgRank = await client.channels.cache.get(channelId).messages.fetch(id);
+    msgRank.edit({
         "content": null,
         "embeds": [{
             "color": 15105570,
             "title": "Membres de la guilde Artémis !",
             "url": "https://nwdb.info/build",
-            "description": "Ici tu peut consulter le rôle et les métiers up des membres de la guilde \n\n ➕ pour t'ajouter dans la liste \n ❌ pour te retirer de la liste",
+            "description": "Ici tu peut consulter le rôle et les métiers up des membres de la guilde \n\n ➕ pour t'ajouter dans la liste \n ❌ pour te retirer de la liste \n 🔄 Debug.",
             "thumbnail": {
                 "url": "https://i.imgur.com/KT6LE1j.png"
             },
             "fields": [
-                { "name": "__**DPS :**__", "value": dpsText, "inline": false },
+                { "name": "DPS :", "value": dpsText, "inline": false },
                 { "name": "__**TANK :**__", "value": tankText, "inline": false },
                 { "name": "__**HEAL :**__", "value": healText, "inline": false },
             ],

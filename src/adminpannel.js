@@ -3,7 +3,7 @@ const getIcon = require("./getIcon")
 const fs = require("fs");
 
 module.exports = async function adminpannel() {
-    let players = JSON.parse(fs.readFileSync("./player.json", 'utf8'));
+    let players = JSON.parse(fs.readFileSync("./json/player.json", 'utf8'));
 
     let test = []
     players.forEach(player => {

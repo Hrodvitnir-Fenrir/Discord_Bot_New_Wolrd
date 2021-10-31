@@ -6,14 +6,16 @@ const { MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, Messag
 const format = require('date-format');
 const puppeteer = require("puppeteer");
 const fs = require("fs");
+const wait = require('util').promisify(setTimeout);
 
 const getIcon = require("./src/getIcon");
-const ddos = require("./src/ddos");
+const status = require("./src/ddos");
 const embedMaker = require("./src/embedMaker");
 const rpg = require("./src/rpg");
-const adminpannel = require("./src/adminpannel")
+const adminpannel = require("./src/adminpannel");
+const { waitForDebugger } = require("inspector");
 
-const admis = ['236552969544269826', '275006697452339202'];
+const admis = ['236552969544269826', '275006697452339202', '253642017022803979'];
 
 Date.prototype.addMin = function (m) {
     this.setTime(this.getTime() + (m * 60 * 1000));
@@ -35,9 +37,9 @@ client.on("messageCreate", async (message) => {
 
         if (message.content == "%rank") {
             client.channels.cache.get(message.channel.id).messages.fetch(message.id).then(message => message.delete());
-            msgDdos = await message.channel.send('Chagement du module... <a:load:895199688645546016>');
+            msgRank = await message.channel.send('Chagement du module... <a:load:895199688645546016>');
 
-            await fs.writeFileSync('./localddos.json', JSON.stringify(msgDdos));
+            await fs.writeFileSync('./json/localrank.json', JSON.stringify(msgRank));
 
             await embedMaker(client);
         }
@@ -46,9 +48,9 @@ client.on("messageCreate", async (message) => {
             client.channels.cache.get(message.channel.id).messages.fetch(message.id).then(message => message.delete());
             msg = await message.channel.send('Les stats arrivent... <a:load:895199688645546016>');
 
-            await fs.writeFileSync('./local.json', JSON.stringify(msg));
+            await fs.writeFileSync('./json/local.json', JSON.stringify(msg));
 
-            await ddos(client);
+            await status(client);
         }
 
         let cmd = message.content.split(" ");
@@ -132,7 +134,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.customId === 'save') {
-        let players = JSON.parse(fs.readFileSync("./player.json", 'utf8'));
+        let players = JSON.parse(fs.readFileSync("./json/player.json", 'utf8'));
 
         const found = players.filter((player) => {
             return player.id == `<@!${id}>`;
@@ -157,7 +159,7 @@ client.on('interactionCreate', async interaction => {
             };
 
             players.push(player);
-            await fs.writeFileSync('./player.json', JSON.stringify(players));
+            await fs.writeFileSync('./json/player.json', JSON.stringify(players));
         }
         bio[id] = [];
         await interaction.update(await rpg(bio[id]));
@@ -165,31 +167,31 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.customId === 'deletsafe') {
-        let players = JSON.parse(fs.readFileSync("./player.json", 'utf8'));
+        let players = JSON.parse(fs.readFileSync("./json/player.json", 'utf8'));
         const tag = `<@!${id}>`;
 
         players = players.filter((player) => {
             return player.id != tag;
         });
 
-        await fs.writeFileSync('./player.json', JSON.stringify(players));
-        await embedMaker(client);
+        await fs.writeFileSync('./json/player.json', JSON.stringify(players));
+        interaction.deferUpdate(await embedMaker(client))
     };
 
     if (interaction.customId === 'death') {
-        let players = JSON.parse(fs.readFileSync("./player.json", 'utf8'));
+        let players = JSON.parse(fs.readFileSync("./json/player.json", 'utf8'));
         const tag = interaction.values[0];
 
         players = players.filter((player) => {
             return player.id != tag;
         });
 
-        await fs.writeFileSync('./player.json', JSON.stringify(players));
-        await embedMaker(client);
+        await fs.writeFileSync('./json/player.json', JSON.stringify(players));
+        interaction.deferUpdate(await embedMaker(client));
     }
 
     if (interaction.customId === 'deleteadmin') {
-        let players = JSON.parse(fs.readFileSync("./player.json", 'utf8'));
+        let players = JSON.parse(fs.readFileSync("./json/player.json", 'utf8'));
 
         if (admis.includes(id) && players.length > 0) {
             await interaction.reply(await adminpannel())
@@ -197,12 +199,23 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.customId === 'update') {
-        await ddos(client);
-        interaction.reply({ content: 'Mise a jour éfectuée', fetchReply: true, ephemeral: false })
-            .then(msg => {
-                setTimeout(() => msg.delete(), 2000)
-            })
+        await interaction.deferReply()
+        await status(client)
+        await wait(3000)
+        await interaction.editReply({content: 'Mise a jour éfectuée'})
+        .then(msg => {
+            setTimeout(() => msg.delete(), 2000)
+        })
     }
+
+    if (interaction.customId === 'change') {
+        let display = JSON.parse(fs.readFileSync("./json/display.json", 'utf8'));
+        display++
+        await fs.writeFileSync('./json/display.json', JSON.stringify(display));
+        interaction.deferUpdate(await embedMaker(client))
+    }
+
+
 });
 
 client.login(process.env.DISCORD_TOCKEN);

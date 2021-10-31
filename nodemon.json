@@ -1,3 +1,3 @@
 {   
-    "ignore": ["local.json", "player.json", "localddos.json"] 
+    "ignore": ["./json/local.json", "./json/player.json", "./json/localrank.json", "./json/display.json"] 
 }

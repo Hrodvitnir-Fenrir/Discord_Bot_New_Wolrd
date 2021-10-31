@@ -5,7 +5,7 @@ const fs = require("fs");
 
 let i = 0
 
-module.exports = async function ddos(client) {
+module.exports = async function status(client) {
     console.log("je change tocard")
 
     const browser = await puppeteer.launch({
@@ -23,8 +23,7 @@ module.exports = async function ddos(client) {
     const queue = await page.evaluate(content => content.innerText, info[5]);
     const time = await page.evaluate(content => content.innerText, info[6]);
 
-    const now = format('hh:mm', new Date());
-    const later = format('hh:mm', new Date().addMin(10));
+    const now = format('Le dd/MM à hh:mm:ss', new Date());
 
     let color;
     let status = "En ligne";
@@ -55,7 +54,7 @@ module.exports = async function ddos(client) {
     
     i++;
 
-    let {id, channelId} = JSON.parse(fs.readFileSync("./local.json", 'utf8'));
+    let {id, channelId} = JSON.parse(fs.readFileSync("./json/local.json", 'utf8'));
 
     await browser.close();
     msg = await client.channels.cache.get(channelId).messages.fetch(id);
