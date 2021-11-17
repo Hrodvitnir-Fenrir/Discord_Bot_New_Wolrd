@@ -67,7 +67,7 @@ module.exports = async function status(client) {
             // "timestamp": new Date(),
             "footer": {
                 "icon_url": "https://i.imgur.com/Pw9TAba.png",
-                "text": "v2.0.0 | " + i + " | Made by Hrodvitnir_Fenrir#4416.",
+                "text": "v2.1.4 | " + i + " | Made by Hrodvitnir_Fenrir#4416.",
             },
             "thumbnail": {
                 "url": "https://i.imgur.com/KT6LE1j.png"

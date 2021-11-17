@@ -35,7 +35,7 @@ module.exports = async function rpg(bio) {
         .setDescription("Sélectionne ton rôle, tes armes ainsi que tes métiers ! \n\n Merci de sélectionner tes rôle dans le bon ordre \n N'oublie pas de te retirer de la liste si tu y est déjà ! \n\n ✅ pour valider \n ❌ pour annuler")
         .setThumbnail('https://i.imgur.com/KT6LE1j.png')
         .addFields(
-            { name: "Tes informations :", value: final }
+            { name: "Tes informations :", value: final.toUpperCase() }
         )
         .setFooter("v2.0.0 | Made by Hrodvitnir_Fenrir#4416.", "https://i.imgur.com/Pw9TAba.png");
 
@@ -72,7 +72,7 @@ module.exports = async function rpg(bio) {
         .addComponents(
             new MessageSelectMenu()
                 .setCustomId('weapon')
-                .setPlaceholder('Sélectionne tes deux arme')
+                .setPlaceholder('Sélectionne tes armes')
                 .setMinValues(2)
                 .setMaxValues(2)
                 .addOptions([

@@ -30,7 +30,7 @@ client.on("ready", () => {
 
 })
 
-let players = [];
+let afficher;
 
 client.on("messageCreate", async (message) => {
     if (message.author.id == "236552969544269826") {
@@ -41,7 +41,8 @@ client.on("messageCreate", async (message) => {
 
             await fs.writeFileSync('./json/localrank.json', JSON.stringify(msgRank));
 
-            await embedMaker(client);
+            let afficher = dps
+            await embedMaker(client, afficher);
         }
 
         if (message.content == "%init") {
@@ -140,6 +141,10 @@ client.on('interactionCreate', async interaction => {
             return player.id == `<@!${id}>`;
         });
 
+        if (bio[id][2] == undefined) {
+            return;
+        }
+
         if (found.length == 0) {
             if (bio[id][3] == undefined) {
                 bio[id][3] = [];
@@ -161,21 +166,26 @@ client.on('interactionCreate', async interaction => {
             players.push(player);
             await fs.writeFileSync('./json/player.json', JSON.stringify(players));
         }
-        bio[id] = [];
         await interaction.update(await rpg(bio[id]));
-        await embedMaker(client);
+        afficher = bio[id][1];
+        await embedMaker(client, afficher);
+        bio[id] = [];
     }
 
-    if (interaction.customId === 'deletsafe') {
+    if (interaction.customId === 'deleteself') {
         let players = JSON.parse(fs.readFileSync("./json/player.json", 'utf8'));
         const tag = `<@!${id}>`;
 
         players = players.filter((player) => {
-            return player.id != tag;
+            if (player.id != tag) {
+                return true;
+            } else {
+                afficher = player.role
+            }
         });
 
         await fs.writeFileSync('./json/player.json', JSON.stringify(players));
-        interaction.deferUpdate(await embedMaker(client))
+        interaction.deferUpdate(await embedMaker(client, afficher))
     };
 
     if (interaction.customId === 'death') {
@@ -187,7 +197,7 @@ client.on('interactionCreate', async interaction => {
         });
 
         await fs.writeFileSync('./json/player.json', JSON.stringify(players));
-        interaction.deferUpdate(await embedMaker(client));
+        interaction.deferUpdate(await embedMaker(client, afficher));
     }
 
     if (interaction.customId === 'deleteadmin') {
@@ -199,20 +209,35 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.customId === 'update') {
-        await interaction.deferReply()
-        await status(client)
-        await wait(3000)
-        await interaction.editReply({content: 'Mise a jour éfectuée'})
-        .then(msg => {
-            setTimeout(() => msg.delete(), 2000)
-        })
+        await interaction.deferReply();
+        await status(client);
+        await wait(3000);
+        await interaction.editReply({ content: 'Mise a jour éffectuée' })
+            .then(msg => {
+                setTimeout(() => msg.delete(), 2000);
+            });
     }
 
     if (interaction.customId === 'change') {
         let display = JSON.parse(fs.readFileSync("./json/display.json", 'utf8'));
         display++
         await fs.writeFileSync('./json/display.json', JSON.stringify(display));
-        interaction.deferUpdate(await embedMaker(client))
+        interaction.deferUpdate(await embedMaker(client, afficher))
+    }
+
+    if (interaction.customId === 'aDps') {
+        afficher = "dps";
+        interaction.deferUpdate(await embedMaker(client, afficher))
+    }
+
+    if (interaction.customId === 'aTank') {
+        afficher = "tank";
+        interaction.deferUpdate(await embedMaker(client, afficher))
+    }
+
+    if (interaction.customId === 'aHeal') {
+        afficher = "heal";
+        interaction.deferUpdate(await embedMaker(client, afficher))
     }
 
 
